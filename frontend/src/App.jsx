@@ -1,9 +1,9 @@
-import Register from "./pages/auth-page/AuthForm.jsx";
+import Card from "./components/card/Card";
 
 function App() {
   return (
     <>
-      <Register />
+      <Card />
     </>
   );
 }
