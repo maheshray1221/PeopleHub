@@ -1,7 +1,7 @@
 import "../auth-page/AuthForm.css";
 import React, { useState } from "react";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
-import { green } from "@mui/material/colors";
+
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -24,7 +24,7 @@ export default function Register() {
     });
   };
   return (
-    <div class="container">
+    <div className="container">
       <Box
         sx={{
           minWidth: 400,
