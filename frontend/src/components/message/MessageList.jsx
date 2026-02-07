@@ -1,7 +1,13 @@
-import React from 'react'
-
+import React from "react";
+import "../message/MessageList.css"
 export default function MessageList() {
   return (
-    <div>messageList</div>
-  )
+    <div className="msg-box">
+      <div className="msger-detail">
+        <p>Mahesh ray</p>
+        {/* <p>gmail</p> */}
+      </div>
+      <p className="msg">my message</p>
+    </div>
+  );
 }
