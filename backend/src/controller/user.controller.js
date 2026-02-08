@@ -1,4 +1,5 @@
 import User from "../models/user.model.js"
+import Post from "../models/posts.model.js"
 import asyncHandler from "../utils/asyncHandler.js"
 import { ApiError } from "../utils/apiError.js"
 import { ApiResponse } from "../utils/apiResponse.js"
@@ -95,7 +96,70 @@ const loginUser = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, { user: loginUser, accessToken, refreshToken }, "User successfully loged In"))
 })
 
+// controller for posts
+const createPost = asyncHandler(async (req, res) => {
+    const { description } = req.body
+    // image ka baad me dekhenge
+    if (description.trim() === "") {
+        throw new ApiError(400, "description are required")
+    }
+    const newPost = await Post.create({
+        description
+    })
+
+    if (!newPost) {
+        throw new ApiError(400, "Error while creating new Post")
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "Post successfully created", newPost))
+})
+
+const allPost = asyncHandler(async (req, res) => {
+    const Posts = await Post.find()
+    if (!Posts) {
+        throw new ApiError(400, "Error while get All Post")
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "successfully get all Posts"))
+})
+
+const likeUnlikePosts = asyncHandler(async (req, res) => {
+    const postId = req.params.postId
+    const userId = req.user.id
+
+    const post = await Post.findById(postId)
+
+    if (!post) {
+        throw new ApiError(400, "Post not found !!")
+    }
+
+    if (post.likes.includes(userId)) {
+        // unlike
+        post.likes.pull(userId)
+    } else {
+        // like
+        post.likes.push(userId)
+    }
+
+    await post.save()
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "Post like seccess",
+            {
+                likesCount: post.likes.length,
+                isLiked: post.likes.includes(userId)
+            }
+        ))
+})
 export {
     registerUser,
     loginUser,
+    createPost,
+    allPost,
+    likeUnlikePosts,
 }

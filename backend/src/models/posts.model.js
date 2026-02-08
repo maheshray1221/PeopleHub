@@ -24,8 +24,8 @@ const postSchema = new mongoose.Schema(
         description: {
             type: String,
             required: true,
-            minlength: [10, "Description must be minimum 6 character"],
-            minlength: [50, "Description must be with in 25 character"],
+            minlength: [10, "Description must be minimum 10 character"],
+            maxlength: [50, "Description must be with in 50 character"],
         },
         likes: [
             {
