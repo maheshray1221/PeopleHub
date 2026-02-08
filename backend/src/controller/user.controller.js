@@ -128,7 +128,7 @@ const allPost = asyncHandler(async (req, res) => {
 })
 
 const likeUnlikePosts = asyncHandler(async (req, res) => {
-    const postId = req.params.postId
+    const postId = req.params
     const userId = req.user.id
 
     const post = await Post.findById(postId)
@@ -156,10 +156,38 @@ const likeUnlikePosts = asyncHandler(async (req, res) => {
             }
         ))
 })
+
+const commentPost = asyncHandler(async (req, res) => {
+    const postId = req.params
+    const userId = req.user.id
+    const { msg } = req.body
+
+    if (msg.trim() === "") {
+        throw new ApiError(400, "message required")
+    }
+
+    const post = await Post.findById(postId)
+
+    if (!post) {
+        throw new ApiError(400, "Post not found")
+    }
+
+    post.comments.push({
+        user: userId,
+        msg: msg.trim()
+    });
+
+    await post.save()
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "successfully comment send", { comments: post.comments }))
+})
 export {
     registerUser,
     loginUser,
     createPost,
     allPost,
     likeUnlikePosts,
+    commentPost
 }
