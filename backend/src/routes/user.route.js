@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
     allPost,
+    commentPost,
     createPost,
     likeUnlikePosts,
     loginUser,
@@ -19,6 +20,9 @@ router.route("/createPost").post(createPost)
 router.route("/allPosts").get(allPost)
 
 router.route("/likeUnlike").post(likeUnlikePosts)
+
+router.route("/addComment").post(commentPost)
+
 
 
 export default router
