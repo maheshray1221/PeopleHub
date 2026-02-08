@@ -3,6 +3,13 @@ import asyncHandler from "../utils/asyncHandler.js"
 import { ApiError } from "../utils/apiError.js"
 import { ApiResponse } from "../utils/apiResponse.js"
 
+
+// send cokie
+const options = {
+    httpOnly: true,
+    secure: true,
+}
+
 // helper function
 const generateAccesseAndRefreshToken = async (userId) => {
     try {
@@ -58,6 +65,37 @@ const registerUser = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, "User register successfully", createUser))
 })
 
+const loginUser = asyncHandler(async (req, res) => {
+    const { email, password } = req.body
 
+    if ([email, password].some((field) =>
+        field?.trim() === "")) {
+        throw new ApiError(400, "all fields are required");
+    }
 
-export { registerUser }
+    const user = await User.findOne({ email })
+
+    if (!user) {
+        throw new ApiError(401, "User not found Please register the user")
+    }
+
+    const isPasswordValid = await user.isPasswordCorrect(password)
+
+    if (!isPasswordValid) {
+        throw new ApiError(400, "Invalid user cradiatial")
+    }
+    const { accessToken, refreshToken } = await generateAccesseAndRefreshToken(user._id)
+
+    const loginUser = await User.findById(user._id).select("-password -refreshToken")
+
+    return res
+        .status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(new ApiResponse(200, { user: loginUser, accessToken, refreshToken }, "User successfully loged In"))
+})
+
+export {
+    registerUser,
+    loginUser,
+}
