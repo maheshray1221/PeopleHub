@@ -10,8 +10,8 @@ const userSchema = new mongoose.Schema(
             unique: true,
             lowercase: true,
             trim: true,
-            minlength: [6, "UserName must be minimum 6 character"],
-            minlength: [25, "UserName must be with in 25 character"],
+            minlength: [3, "UserName must be minimum 6 character"],
+            maxlength: [25, "UserName must be with in 25 character"],
         },
         email: {
             type: String,
@@ -19,15 +19,15 @@ const userSchema = new mongoose.Schema(
             unique: true,
             lowercase: true,
             trim: true,
-            minlength: [10, "UserName must be minimum 6 character"],
-            minlength: [40, "UserName must be with in 25 character"],
+            minlength: [3, "UserName must be minimum 6 character"],
+            maxlength: [40, "UserName must be with in 25 character"],
         },
         password: {
             type: String,
             required: true,
             trim: true,
             minlength: [6, "UserName must be minimum 6 character"],
-            minlength: [25, "UserName must be with in 25 character"],
+            maxlength: [25, "UserName must be with in 25 character"],
         },
         refreshToken: {
             type: String,
@@ -36,14 +36,14 @@ const userSchema = new mongoose.Schema(
     }, { timestamps: true })
 
 // convert password in hash form
-userSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next()
+userSchema.pre("save", async function () {
+    if (!this.isModified("password")) return 
     this.password = await bcrypt.hash(this.password, 10)
-    next()
+    
 })
 
 // coustom method for check password
-userSchema.methods.isPasswordCorrect = async (password) => {
+userSchema.methods.isPasswordCorrect = async function (password) {
     return await bcrypt.compare(password, this.password)
 }
 
