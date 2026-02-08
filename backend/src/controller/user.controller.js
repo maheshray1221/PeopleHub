@@ -129,7 +129,7 @@ const allPost = asyncHandler(async (req, res) => {
 
 const likeUnlikePosts = asyncHandler(async (req, res) => {
     const postId = req.params
-    const userId = req.user.id
+    const userId = req.user._id
 
     const post = await Post.findById(postId)
 
@@ -159,7 +159,7 @@ const likeUnlikePosts = asyncHandler(async (req, res) => {
 
 const commentPost = asyncHandler(async (req, res) => {
     const postId = req.params
-    const userId = req.user.id
+    const userId = req.user._id
     const { msg } = req.body
 
     if (msg.trim() === "") {
